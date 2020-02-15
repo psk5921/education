@@ -1,0 +1,102 @@
+{include file="public/header" title="管理员添加" keywords="管理员添加" /}
+<script type="text/javascript" src="__KDWL_JS_V1__/xadmin.js"></script>
+<style>
+    .form{
+        padding: 10px 10px 0 10px;
+        background: #fff;
+    }
+</style>
+<form class="layui-form layui-form-pane form" action="" lay-filter="add">
+    <div class="layui-form-item">
+        <label class="layui-form-label">管理员名称 <span class="x-red">*</span></label>
+        <div class="layui-input-inline">
+            <input type="text" name="username" lay-verify="required" placeholder="请输入管理员名称" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">登录密码 <span class="x-red">*</span></label>
+        <div class="layui-input-inline">
+            <input type="password" name="password" lay-verify="required" placeholder="请输入登录密码" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">角色</label>
+        <div class="layui-input-block">
+            {if $role}
+            <select name="role_id" lay-filter="role_id" lay-search>
+                <option value="">请选择角色</option>
+                {foreach $role as $item}
+                <option value="{$item.id}">{$item.name}</option>
+                {/foreach}
+            </select>
+            {else}
+            <input type="text"  name="role_id" autocomplete="off" class="layui-input" placeholder="请先去添加角色" value="" disabled>
+            {/if}
+        </div>
+    </div>
+    <div class="layui-form-item" pane="">
+        <label class="layui-form-label" style="line-height: 20px">账号状态</label>
+        <div class="layui-input-block">
+            <input type="radio" name="status" value="1" title="正常" checked="">
+            <input type="radio" name="status" value="2" title="限制登录">
+        </div>
+    </div>
+
+    <div class="layui-form-item" style="    position: fixed;
+    bottom: 0;
+    left: 38%;">
+        <div class="layui-btn " lay-submit="" lay-filter="submits" style="width: 100px;height: 40px;line-height: 40px">确认</div>
+    </div>
+</form>
+
+<script>
+    layui.use(['form'], function(){
+        var form = layui.form
+            ,layer = layui.layer
+        //监听提交
+        form.on('submit(submits)', function(data){
+            $.ajax({
+                type: "post",
+                url: "{:url('add')}",
+                dataType: "json",
+                data:data.field,
+                success: function(data, textStatus, request){
+                    if( data.code == 20006){
+                        //用户信息失效
+                        layer.msg(data.msg,{anim:0,shade:0.6},function () {
+                            parent.location.reload();
+                            xadmin.del_tab();
+                            xadmin.close();
+                        });
+                    }else if( data.code == 1 ){
+                        layer.msg('添加管理员成功',{anim:0,shade:0.6},function () {
+                            parent.location.reload();
+                            xadmin.close();
+                        });
+                    }else{
+                        layer.msg(data.msg,{anim:0,shade:0.6},function () {
+                            return  false;
+                        });
+                    }
+                }
+            });
+            /*layer.alert(JSON.stringify(data.field), {
+                title: '最终的提交信息'
+            })*/
+            return false;
+        });
+
+        //表单初始赋值
+      /*  form.val('add', {
+            "username": "贤心" // "name": "value"
+            ,"password": "123456"
+            ,"interest": 1
+            ,"like[write]": true //复选框选中状态
+            ,"close": true //开关状态
+            ,"sex": "女"
+            ,"desc": "我爱 layui"
+        })*/
+
+
+    });
+</script>

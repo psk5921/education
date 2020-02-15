@@ -1,0 +1,65 @@
+<!doctype html>
+<html class="x-admin-sm">
+<head>
+    <meta charset="UTF-8">
+    <title>[title]</title>
+    <meta name="keywords" content="[keywords]" />
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <script>
+        var start = new Date().getTime();
+    </script>
+    <link rel="stylesheet" href="__KDWL_CSS_V1__/font.css">
+    <link rel="stylesheet" href="__KDWL_CSS_V1__/login.css">
+    <link rel="stylesheet" href="__KDWL_CSS_V1__/xadmin.css">
+    <script type="text/javascript" src="__KDWL_JS_V1__/jquery.min.js"></script>
+    <script type="text/javascript" src="__KDWL_JS_V1__/vue2.5.16.min.js"></script>
+    <script src="__KDWL_LIB_V1__/layui/layui.js" charset="utf-8"></script>
+    <!--[if lt IE 9]>
+    <script src="__KDWL_JS_V1__/html5.min.js"></script>
+    <script src="__KDWL_JS_V1__/respond.min.js"></script>
+    <script src="__KDWL_JS_V1__/vue2.5.16.min.js"></script>
+    <![endif]-->
+
+ <!--   <script src="__plus__/ueditor/ueditor.config.js"></script>
+    <script src="__plus__/ueditor/ueditor.all.min.js"></script>
+    <script src="__plus__/ueditor/lang/zh-cn/zh-cn.js"></script>-->
+    <style>
+        #progress {
+            position: fixed;
+            height: 2px;
+            background: #009688;
+            transition: opacity 500ms linear;
+            z-index:100000;
+        }
+
+        #progress.done {
+            opacity: 0
+        }
+
+        #progress span {
+            position: absolute;
+            height: 2px;
+            -webkit-box-shadow: #009688 1px 0 6px 1px;
+            -webkit-border-radius: 100%;
+            opacity: 1;
+            width: 150px;
+            right: -10px;
+            -webkit-animation: pulse 2s ease-out 0s infinite;
+        }
+
+        @-webkit-keyframes pulse {
+            30% {
+                opacity: .6
+            }
+            60% {
+                opacity: 0;
+            }
+            100% {
+                opacity: .6
+            }
+        }
+    </style>
+
+</head>

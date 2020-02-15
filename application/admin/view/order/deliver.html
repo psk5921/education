@@ -1,0 +1,70 @@
+{include file="public/header" title="确认发货" keywords="确认发货" /}
+<script type="text/javascript" src="__KDWL_JS_V1__/xadmin.js"></script>
+<style>
+    .form{
+        padding: 10px 10px 0 10px;
+        background: #fff;
+    }
+</style>
+<form class="layui-form layui-form-pane form" action="" lay-filter="deliver">
+    <div class="layui-form-item">
+        <label class="layui-form-label">物流公司 <span class="x-red">*</span></label>
+        <div class="layui-input-inline">
+            <input type="text" name="express_name" lay-verify="required" placeholder="请输入物流公司名称" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">物流单号 <span class="x-red">*</span></label>
+        <div class="layui-input-inline">
+            <input type="text" name="express_no" lay-verify="required" placeholder="请输入物流单号" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <input type="hidden" name="id" value="{$id}">
+    <div class="layui-form-item" style="    position: fixed;
+    bottom: 0;
+    left: 38%;">
+        <div class="layui-btn " lay-submit="" lay-filter="submits" style="width: 100px;height: 40px;line-height: 40px">确认发货</div>
+    </div>
+</form>
+
+<script>
+    layui.use(['form'], function(){
+        var form = layui.form
+            ,layer = layui.layer
+        //监听提交
+        form.on('submit(submits)', function(data){
+            $.ajax({
+                type: "post",
+                url: "{:url('deliver')}",
+                dataType: "json",
+                data:data.field,
+                success: function(data, textStatus, request){
+
+                    if( data.code == 20006){
+                        //用户信息失效
+                        layer.msg(data.msg,{anim:0,shade:0.6},function () {
+                            parent.location.reload();
+                            xadmin.del_tab();
+                            xadmin.close();
+                            //parent.location.href = "{:url('login/index')}"
+                        });
+                    }else if( data.code == 1 ){
+                        layer.msg(data.msg,{anim:0,shade:0.6},function () {
+                            parent.location.reload();
+                            xadmin.close();
+                        });
+                    }else{
+                        layer.msg(data.msg,{anim:0,shade:0.6},function () {
+                            return  false;
+                        });
+                    }
+                }
+            });
+            return false;
+        });
+
+
+    });
+</script>

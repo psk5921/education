@@ -1,0 +1,103 @@
+{include file="public/header" title="课程分类编辑" keywords="课程分类编辑" /}
+<script type="text/javascript" src="__KDWL_JS_V1__/xadmin.js"></script>
+<style>
+    .form{
+        padding: 10px 10px 0 10px;
+        background: #fff;
+    }
+</style>
+<form class="layui-form layui-form-pane form" action="" lay-filter="update">
+    <div class="layui-form-item">
+        <label  class="layui-form-label">
+           会员名称 <span class="x-red">*</span></label>
+        <div class="layui-input-inline">
+            <input type="text"  value="{$sel.info}" autocomplete="off" class="layui-input" disabled>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label  class="layui-form-label">
+            课程名称 <span class="x-red">*</span></label>
+        <div class="layui-input-inline">
+            <input type="text"  value="{$sel.course_title}" autocomplete="off" class="layui-input" disabled>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label  class="layui-form-label">
+            班级名称<span class="x-red">*</span></label>
+        <div class="layui-input-inline">
+            <input type="text"  value="{$sel.class_name}" autocomplete="off" class="layui-input" disabled>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label  class="layui-form-label">
+            上课信息 <span class="x-red">*</span></label>
+        <div class="layui-input-inline">
+            <input type="text"  value="{$sel.time_str}" autocomplete="off" class="layui-input" disabled>
+        </div>
+    </div>
+
+    <div class="layui-form-item" id="package" >
+        <label  class="layui-form-label">
+            套餐名称<span class="x-red">*</span></label>
+        <div class="layui-input-inline">
+            <input type="text"  value="{$sel.package_str}" autocomplete="off" class="layui-input" disabled>
+        </div>
+    </div>
+
+    <div class="layui-form-item" pane="">
+        <label class="layui-form-label" style="line-height: 20px" >状态<span class="x-red">*</span></label>
+        <div class="layui-input-block">
+            <input type="radio" name="status" value="0" title="正常" {if $sel.status == 0 } checked="checked"{/if}>
+            <input type="radio" name="status" value="1" title="异常" {if $sel.status == 1 } checked="checked"{/if}>
+        </div>
+    </div>
+    <input type="hidden" name="id" value="{$sel.id}">
+    <div class="layui-form-item" style="    position: fixed;
+    bottom: 0;
+    left: 38%;">
+        <div class="layui-btn " lay-submit="" lay-filter="submits" style="width: 100px;height: 40px;line-height: 40px">确认修改</div>
+    </div>
+</form>
+
+<script>
+
+    layui.use(['form'], function(){
+        var form = layui.form
+            ,layer = layui.layer
+        //监听提交
+        form.on('submit(submits)', function(data){
+            $.ajax({
+                type: "post",
+                url: "{:url('update')}",
+                dataType: "json",
+                data:data.field,
+                success: function(data, textStatus, request){
+                    if( data.code == 20006){
+                        //用户信息失效
+                        layer.msg(data.msg,{anim:0,shade:0.6},function () {
+                            parent.location.reload();
+                            xadmin.del_tab();
+                            xadmin.close();
+                        });
+                    }else if( data.code == 1 ){
+                        layer.msg(data.msg,{anim:0,shade:0.6},function () {
+                            parent.location.reload();
+                            xadmin.close();
+                        });
+                    }else{
+                        layer.msg(data.msg,{anim:0,shade:0.6},function () {
+                            return  false;
+                        });
+                    }
+                }
+            });
+            /*layer.alert(JSON.stringify(data.field), {
+                title: '最终的提交信息'
+            })*/
+            return false;
+        });
+
+    });
+</script>

@@ -1,0 +1,97 @@
+{include file="public/header" title="会员积分记录添加" keywords="会员积分记录添加" /}
+<script type="text/javascript" src="__KDWL_JS_V1__/xadmin.js"></script>
+<style>
+    .form{
+        padding: 10px 10px 0 10px;
+        background: #fff;
+    }
+</style>
+<form class="layui-form layui-form-pane form" action="" lay-filter="add">
+
+   <!-- <div class="layui-form-item">
+        <label for="username" class="layui-form-label">
+            <span class="x-red">*</span>会员名称</label>
+        <div class="layui-input-inline">
+            <select id="uid" name="uid" class="valid">
+                {volist name="user" id="vo"}
+                <option value="{$vo.id}">{$vo.nickname}</option>
+                {/volist}
+            </select>
+        </div>
+    </div>-->
+
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">变动积分 <span class="x-red">*</span></label>
+        <div class="layui-input-inline">
+            <input type="text" name="intergral" lay-verify="required" placeholder="请输入变动积分" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item" pane="">
+        <label class="layui-form-label" style="line-height: 20px">变动类型</label>
+        <div class="layui-input-block">
+            <input type="radio" name="type" value="0" title="购买" checked="checked">
+            <input type="radio" name="type" value="1" title="后台">
+        </div>
+    </div>
+
+
+    <input type="hidden" name="uid" value="{$uid}">
+
+
+
+
+
+
+    <div class="layui-form-item" style="position: fixed;bottom: 0;left: 38%;">
+        <div class="layui-btn " lay-submit="" lay-filter="submits" style="width: 100px;height: 40px;line-height: 40px">确认</div>
+    </div>
+</form>
+
+<script>
+    layui.use(['form'], function(){
+        var form = layui.form
+            ,layer = layui.layer
+        //监听提交
+        form.on('submit(submits)', function(data){
+            $.ajax({
+                type: "post",
+                url: "{:url('jifen_add')}",
+                dataType: "json",
+                data:data.field,
+                success: function(data, textStatus, request){
+                    if( data.code == 20006){
+                        //用户信息失效
+                        layer.msg(data.msg,{anim:0,shade:0.6},function () {
+                            parent.location.reload();
+                            xadmin.del_tab();
+                            xadmin.close();
+                        });
+                    }else if( data.code == 1 ){
+                        layer.msg(data.msg,{anim:0,shade:0.6},function () {
+                            parent.location.reload();
+                            xadmin.close();
+                        });
+                    }else{
+                        layer.msg(data.msg,{anim:0,shade:0.6},function () {
+                            return  false;
+                        });
+                    }
+                }
+            });
+            /*layer.alert(JSON.stringify(data.field), {
+                title: '最终的提交信息'
+            })*/
+            return false;
+        });
+
+
+
+
+    });
+
+
+
+</script>

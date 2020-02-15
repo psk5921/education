@@ -1,0 +1,225 @@
+{include file="public/header" title="会员课程" keywords="会员课程" /}
+<script type="text/javascript" src="__KDWL_JS_V1__/xadmin.js"></script>
+<body>
+<div class="x-nav" id="app">
+          <span class="layui-breadcrumb">
+            <a href="JavaScript:void(0)">{{first_nav}}</a>
+            <a href="JavaScript:void(0)">{{second_nav}}</a>
+          </span>
+    <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" onclick="location.reload()" title="刷新">
+        <i class="layui-icon layui-icon-refresh" style="line-height:30px"></i></a>
+</div>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body ">
+                    <form class="layui-form layui-col-space5" id="searchs">
+                        <div class="layui-inline layui-show-xs-block">
+                            <input class="layui-input"  autocomplete="off" placeholder="开始时间" name="start" id="start">
+                        </div>
+                        <div class="layui-inline layui-show-xs-block">
+                            <input class="layui-input"  autocomplete="off" placeholder="结束时间" name="end" id="end">
+                        </div>
+
+                        <div class="layui-inline layui-show-xs-block">
+                            <input type="text" name="nickname" id="nickname" placeholder="请输入会员昵称" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-inline layui-show-xs-block">
+                            <button class="layui-btn" type="button"  lay-filter="search" id="search"><i class="layui-icon">&#xe615;</i>查询</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="layui-card-header">
+                    <button class="layui-btn" id="add_vip"  onclick="xadmin.open('添加会员课程','{:url('add')}',400,500)"><i class="layui-icon"></i>添加会员课程</button>
+                </div>
+                <div class="layui-card-body ">
+                    <table id="program" lay-filter="program"></table>
+                </div>
+                <script type="text/html" id="barDemo">
+
+                    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+                    <a class="layui-btn layui-btn-xs" lay-event="hexiao">核销</a>
+                    <!--<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>-->
+
+                </script>
+
+                <!--<script type="text/html" id="vip_v1">
+                   {{#  if(d.identity == 0){ }}
+                            粉丝用户
+                    {{#  } else { }}
+                    {{d.identity == 1}}
+                        付费用户
+                    {{#  } }}
+                </script>-->
+
+
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            first_nav: "会员管理",
+            second_nav: "会员课程",
+        },
+        methods: {},
+        //监听属性
+        watch: {
+
+        },
+        //计算属性
+        computed: {
+
+        }
+
+    });
+    layui.use(['table'], function(){
+        var table = layui.table;
+        //第一个实例
+        table.render({
+            elem: '#program'
+            ,url: "{:url('program_list')}" //数据接口
+            ,page: true //开启分页
+            ,cols: [
+                [ //表头
+                   /* {field: 'id', title: 'ID', width:80,align:'center'} ,*/
+                   {field: 'nickname', title: '会员昵称',align:'center', width:130}
+                    ,{field: 'baby_name', title: '宝宝姓名',align:'center', width:80}
+                    ,{field: 'course_title', title: '课程名称',align:'center'}
+                    /*,{field: 'package_name', title: '套餐名称',align:'center'}*/
+                    /*,{field: 'package_month', title: '有效时间(月)',align:'center'}*/
+                    ,{field: 'package_price', title: '课程价格',align:'center', width:120}
+                    ,{field: 'end_time', title: '课程结束时间',align:'center', width:150}
+                    ,{field: 'count', title: '剩余课时',align:'center', width:150}
+                    ,{field: 'money', title: '剩余金额',align:'center', width:150}
+                   /* ,{field: 'createtime', title: '生成时间',align:'center', width:130}*/
+                    ,{field: 'status', title: '状态',align:'center', width:80}
+                    ,{title:'操作', templet:'#barDemo',align:'center'}
+                ]
+            ]
+            ,id: 'program',
+        });
+
+
+        //监听工具条
+        table.on('tool(program)', function(obj){
+            var data = obj.data;
+            if(obj.event === 'edit'){
+                var url = "{:url('update')}?id="+data.id;
+               // location.href = url;
+                xadmin.open('编辑会员课程',url,400,500)
+            }else if(obj.event === 'del'){
+                layer.confirm('确认要删除该会员课程吗？操作不可逆哦！！',{title:'系统提示'}, function(index){
+                    $.ajax({
+                        type: "post",
+                        url: "{:url('delete')}",
+                        dataType: "json",
+                        data:{id:data.id},
+                        success: function(data, textStatus, request){
+                            if( data.code == 20006){
+                                //用户信息失效
+                                layer.msg(data.msg,{anim:0,shade:0.6},function () {
+                                    parent.location.reload();
+                                    xadmin.del_tab();
+                                    xadmin.close();
+                                });
+                            }else if( data.code == 1 ){
+                                layer.msg(data.msg,{anim:0,shade:0.6},function () {
+                                    location.reload();
+                                    xadmin.close();
+                                });
+                            }else{
+                                layer.msg(data.msg,{anim:0,shade:0.6},function () {
+                                    return  false;
+                                });
+                            }
+                        }
+                    });
+                    layer.close(index);
+                });
+            }else if(obj.event === 'hexiao'){
+                layer.confirm('确认要核销该会员课程吗？操作不可逆哦！！',{title:'系统提示'}, function(index){
+                    $.ajax({
+                        type: "post",
+                        url: "{:url('hexiao')}",
+                        dataType: "json",
+                        data:{id:data.id},
+                        success: function(data, textStatus, request){
+                            if( data.code == 20006){
+                                //用户信息失效
+                                layer.msg(data.msg,{anim:0,shade:0.6},function () {
+                                    xadmin.del_tab();
+                                    xadmin.close();
+                                    parent.location.href = "{:url('login/index')}"
+                                });
+                            }else if( data.code == 1 ){
+                                layer.msg(data.msg,{anim:0,shade:0.6},function () {
+                                    location.reload();
+                                    xadmin.close();
+                                });
+                            }else{
+                                layer.msg(data.msg,{anim:0,shade:0.6},function () {
+                                    return  false;
+                                });
+                            }
+                        }
+                    });
+                    layer.close(index);
+                });
+            }
+
+
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+        //重载
+
+        $('#search').on('click', function(){
+            var name = $('#nickname');
+            var start = $('#start');
+            var end = $('#end');
+            //执行重载
+            table.reload('program', {
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+                ,where: {
+                    name: name.val(),
+                    start: start.val(),
+                    end: end.val(),
+                }
+            }, 'data');
+        });
+    });
+
+    //日期范围选择
+    layui.use('laydate', function() {
+        var laydate = layui.laydate;
+
+        laydate.render({
+            elem: '#start'
+        });
+        //日期范围选择
+        laydate.render({
+            elem: '#end'
+        });
+    })
+
+
+
+</script>
+</html>

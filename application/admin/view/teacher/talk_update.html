@@ -1,0 +1,114 @@
+{include file="public/header" title="用户家庭住址编辑" keywords="用户家庭住址编辑" /}
+<script type="text/javascript" src="__KDWL_JS_V1__/xadmin.js"></script>
+<style>
+    .form{
+        padding: 10px 10px 0 10px;
+        background: #fff;
+    }
+</style>
+<form class="layui-form layui-form-pane form" action="" lay-filter="update">
+
+    <div class="layui-form-item">
+        <label for="username" class="layui-form-label">
+            评论用户</label>
+        <div class="layui-input-inline">
+            <input type="text" value="{$user.info}" autocomplete="off" class="layui-input" disabled>
+        </div>
+    </div>
+
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">评论内容 <span class="x-red">*</span></label>
+        <div class="layui-input-inline">
+            <textarea name="content" id="" cols="30" rows="10" class="layui-textarea" style="resize: none;width: 300px;"></textarea>
+        </div>
+    </div>
+
+    <div class="layui-form-item" pane="">
+        <label class="layui-form-label" style="line-height: 20px">状态<span class="x-red">*</span></label>
+        <div class="layui-input-block">
+            <input type="radio" name="status" value="0" title="等待审核" lay-filter="status">
+            <input type="radio" name="status" value="1" title="审核通过" lay-filter="status">
+            <input type="radio" name="status" value="2" title="审核驳回" lay-filter="status">
+        </div>
+    </div>
+
+    <div class="layui-form-item" id="reason" {if $sel.status !=2 }style="display: none"{/if}>
+        <label class="layui-form-label">驳回原因 <span class="x-red">*</span></label>
+        <div class="layui-input-inline">
+            <textarea name="reason" id="" cols="30" rows="10" class="layui-textarea" style="resize: none;width: 300px;"></textarea>
+        </div>
+    </div>
+
+
+    <input type="hidden" name="id">
+    <div class="layui-form-item" style="    position: fixed;
+    bottom: 0;
+    left: 38%;">
+        <div class="layui-btn " lay-submit="" lay-filter="submits" style="width: 100px;height: 40px;line-height: 40px">确认修改</div>
+    </div>
+</form>
+
+<script>
+
+    layui.use(['form'], function(){
+        var form = layui.form
+            ,layer = layui.layer
+        //监听提交
+        form.on('submit(submits)', function(data){
+            $.ajax({
+                type: "post",
+                url: "{:url('talk_update')}",
+                dataType: "json",
+                data:data.field,
+                success: function(data, textStatus, request){
+                    if( data.code == 20006){
+                        //用户信息失效
+                        layer.msg(data.msg,{anim:0,shade:0.6},function () {
+                            parent.location.reload();
+                            xadmin.del_tab();
+                            xadmin.close();
+                        });
+                    }else if( data.code == 1 ){
+                        layer.msg(data.msg,{anim:0,shade:0.6},function () {
+                            parent.location.reload();
+                            xadmin.close();
+                        });
+                    }else{
+                        layer.msg(data.msg,{anim:0,shade:0.6},function () {
+                            return  false;
+                        });
+                    }
+                }
+            });
+            /*layer.alert(JSON.stringify(data.field), {
+                title: '最终的提交信息'
+            })*/
+            return false;
+        });
+
+        form.on('radio(status)', function(data){
+            var v = data.value
+            if(v == 2){
+                $('#reason').show();
+            }else{
+                $('#reason').hide();
+                $('#reason').find('textarea').val(' ');
+            }
+        });
+
+        //表单初始赋值
+        form.val('update', {
+            "id": "{$sel.id}", // "name": "value"
+            "uid": "{$sel.uid}", // "name": "value"
+            "content": "{$sel.content}", // "name": "value"
+            "status": "{$sel.status}" ,// "name": "value"
+            "reason": "{$sel.reason}" ,// "name": "value"
+
+
+        })
+    });
+</script>
+
+

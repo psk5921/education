@@ -1,0 +1,45 @@
+{include file="Public/header" title="后台管理" keywords="后台管理" /}
+<script type="text/javascript" src="__KDWL_JS_V1__/xadmin.js"></script>
+<body>
+<div class="x-nav" id="app">
+          <span class="layui-breadcrumb">
+            <a href="JavaScript:void(0)">{{first_nav}}</a>
+            <a href="JavaScript:void(0)">{{second_nav}}</a>
+          </span>
+    <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" onclick="location.reload()" title="刷新">
+        <i class="layui-icon layui-icon-refresh" style="line-height:30px"></i></a>
+</div>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body ">
+                    <form class="layui-form layui-col-space5" id="search">
+                        <div class="layui-inline layui-show-xs-block">
+                            <input type="text" name="nickname" id="nickname" placeholder="请输入会员名" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-inline layui-show-xs-block">
+                            <button class="layui-btn" type="submit" lay-submit lay-filter="search"><i class="layui-icon">&#xe615;</i>查询</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="layui-card-header">
+                    <button class="layui-btn" id="add_vip"  onclick="xadmin.open('添加会员','{:url('add')}',400,500)"><i class="layui-icon"></i>添加</button>
+                </div>
+                <div class="layui-card-body ">
+                    <table id="member" lay-filter="member"></table>
+                </div>
+                <script type="text/html" id="barDemo">
+                    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+                    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+
+                </script>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script src="/static/js/global.js?version={$version}"></script>
+<script src="/static/js/common.js?version={$version}"></script>
+<script src="/static/js/member_ls.js?version={$version}"></script>
+</html>

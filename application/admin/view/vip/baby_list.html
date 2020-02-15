@@ -1,0 +1,116 @@
+{include file="public/header" title="会员宝宝" keywords="会员宝宝" /}
+<script type="text/javascript" src="__KDWL_JS_V1__/xadmin.js"></script>
+<body>
+<div class="x-nav" id="app">
+          <span class="layui-breadcrumb">
+            <a href="JavaScript:void(0)">{{first_nav}}</a>
+            <a href="JavaScript:void(0)">{{second_nav}}</a>
+          </span>
+    <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" onclick="location.reload()" title="刷新">
+        <i class="layui-icon layui-icon-refresh" style="line-height:30px"></i></a>
+    <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right;margin-right: 15px;"
+       onclick="location.href='{:url(\'ls\')}'" title="返回">
+        <i class="layui-icon layui-icon-return" style="line-height:30px"></i></a>
+</div>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                {if $cnt == 0 }
+                <div class="layui-card-header">
+                    <button class="layui-btn" id="add_vip"  onclick="xadmin.open('添加会员宝宝','{:url('add_baby')}?id={$id}',450)"><i class="layui-icon"></i>添加</button>
+                </div>
+                {/if}
+                <div class="layui-card-body ">
+                    <table id="baby" lay-filter="baby"></table>
+                </div>
+                <script type="text/html" id="barDemo">
+                    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+                   <!-- <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>-->
+                </script>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+            first_nav: "会员列表",
+            second_nav: "会员宝宝信息",
+        },
+        methods: {},
+        //监听属性
+        watch: {
+
+        },
+        //计算属性
+        computed: {
+
+        }
+
+    });
+    layui.use(['table'], function(){
+        var table = layui.table;
+        //第一个实例
+        table.render({
+            elem: '#baby'
+            //,url: "{:url('groupListUser')}" //数据接口
+            ,url: "{:url('baby_list')}?id="+{$id}
+            ,page: true //开启分页
+            ,cols: [[ //表头
+                {field:'baby_name',title:'宝宝姓名',align:"center"}
+                ,{field: 'baby_en_name', title: '英文名',align: "center"}
+                ,{field: 'baby_sex', title: '性别',align: "center"}
+                ,{field: 'year', title: '出生年月',align: "center"}
+                ,{field: 'baby_school', title: '宝宝学校',align: "center"}
+                ,{field: 'createtime', title: '添加时间',align: "center"}
+                 ,{title:'操作', templet:'#barDemo',align: "center"}
+            ]]
+            ,id: 'baby',
+        });
+        //监听工具条
+        table.on('tool(baby)', function(obj){
+            var data = obj.data;
+            if(obj.event === 'edit'){
+                var url = "{:url('update_baby')}?id="+data.id;
+                xadmin.open('编辑宝宝',url,400)
+            }else if(obj.event === 'del'){
+                layer.confirm('确认要删除宝宝吗？操作不可逆哦！！',{title:'系统提示'}, function(index){
+                    $.ajax({
+                        type: "post",
+                        url: "{:url('del_baby')}",
+                        dataType: "json",
+                        data:{id:data.id,gid:{$id}},
+                        success: function(data, textStatus, request){
+                            if( data.code == 20006){
+                                //用户信息失效
+                                layer.msg(data.msg,{anim:0,shade:0.6},function () {
+                                    parent.location.reload();
+                                    xadmin.del_tab();
+                                    xadmin.close();
+                                });
+                            }else if( data.code == 1 ){
+                                layer.msg('data.msg',{anim:0,shade:0.6},function () {
+                                    location.reload();
+                                    xadmin.close();
+                                });
+                            }else{
+                                layer.msg(data.msg,{anim:0,shade:0.6},function () {
+                                    return  false;
+                                });
+                            }
+                        }
+                    });
+                    layer.close(index);
+                });
+            }else{
+
+            }
+        });
+    });
+
+
+</script>
+</html>

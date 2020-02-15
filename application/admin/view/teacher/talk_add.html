@@ -1,0 +1,115 @@
+{include file="public/header" title="管理员添加" keywords="管理员添加" /}
+<script type="text/javascript" src="__KDWL_JS_V1__/xadmin.js"></script>
+<style>
+    .form{
+        padding: 10px 10px 0 10px;
+        background: #fff;
+    }
+</style>
+<form class="layui-form layui-form-pane form" action="" lay-filter="add">
+    <div class="layui-form-item">
+        <label for="username" class="layui-form-label">
+            <span class="x-red">*</span>评论用户</label>
+        <div class="layui-input-inline">
+            <select id="uid" name="uid" class="valid">
+                {volist name="user" id="vo"}
+                <option value="{$vo.id}">{$vo.nickname}</option>
+                {/volist}
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label for="username" class="layui-form-label">
+            <span class="x-red">*</span>教师名称</label>
+        <div class="layui-input-inline">
+            <select id="tid" name="tid" class="valid">
+                {volist name="teacher" id="vo"}
+                <option value="{$vo.id}">{$vo.teacher_name}</option>
+                {/volist}
+            </select>
+        </div>
+    </div>
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">评论内容 <span class="x-red">*</span></label>
+        <div class="layui-input-inline">
+            <input type="text" name="content" lay-verify="required" placeholder="请输入评论内容" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item" pane="">
+        <label class="layui-form-label" style="line-height: 20px">状态</label>
+        <div class="layui-input-block">
+            <input type="radio" name="status" value="0" title="等待审核" checked="checked">
+            <input type="radio" name="status" value="1" title="审核通过">
+            <input type="radio" name="status" value="2" title="审核驳回">
+        </div>
+    </div>
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">驳回原因 <span class="x-red">*</span></label>
+        <div class="layui-input-inline">
+            <input type="text" name="reason" lay-verify="required" placeholder="请输入驳回原因" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+
+    <div class="layui-form-item" style="text-align:center;">
+        <div class="layui-btn " lay-submit="" lay-filter="submits" style="width: 100px;height: 40px;line-height: 40px">确认</div>
+    </div>
+</form>
+
+<script>
+    layui.use(['form'], function(){
+        var form = layui.form
+            ,layer = layui.layer
+        //监听提交
+        form.on('submit(submits)', function(data){
+            $.ajax({
+                type: "post",
+                url: "{:url('')}",
+                dataType: "json",
+                data:data.field,
+                success: function(data, textStatus, request){
+                    if( data.code == 20006){
+                        //用户信息失效
+                        layer.msg(data.msg,{anim:0,shade:0.6},function () {
+                            parent.location.reload();
+                            xadmin.del_tab();
+                            xadmin.close();
+                        });
+                    }else if( data.code == 1 ){
+                        layer.msg(data.msg,{anim:0,shade:0.6},function () {
+                            parent.location.reload();
+                            xadmin.close();
+                        });
+                    }else{
+                        layer.msg(data.msg,{anim:0,shade:0.6},function () {
+                            return  false;
+                        });
+                    }
+                }
+            });
+            /*layer.alert(JSON.stringify(data.field), {
+                title: '最终的提交信息'
+            })*/
+            return false;
+        });
+
+        //表单初始赋值
+        /*  form.val('add', {
+              "username": "贤心" // "name": "value"
+              ,"password": "123456"
+              ,"interest": 1
+              ,"like[write]": true //复选框选中状态
+              ,"close": true //开关状态
+              ,"sex": "女"
+              ,"desc": "我爱 layui"
+          })*/
+
+
+    });
+</script>

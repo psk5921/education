@@ -1,0 +1,27 @@
+<script>
+    function _init() {
+        var end = new Date().getTime();
+        var ox = end - start;
+        $({property: 0}).stop().animate({property: 100}, {
+            duration: ox,
+            progress: function () {
+                var percentage = Math.round(this.property);
+                $('#progress').css('width', percentage + "%")
+                if (percentage == 100) {
+                    $("#progress").addClass("done");//完成，隐藏进度条
+                }
+            }
+        });
+    }
+    function _init1() {
+        var end = new Date().getTime();
+        var ox = (end - start) < 500 ? (end - start) + 400 : (end - start);
+        $(window.parent.document).find('#progress').removeClass("done");;
+        $(window.parent.document).find('#progress').attr('style','');
+        $(window.parent.document).find('#progress').animate({
+            width: "100%",
+        }, ox ,function () {
+            $(window.parent.document).find('#progress').addClass("done");//完成，隐藏进度条
+        });
+    }
+</script>

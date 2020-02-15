@@ -1,0 +1,109 @@
+{include file="public/header" title="用户家庭住址编辑" keywords="用户家庭住址编辑" /}
+<script type="text/javascript" src="__KDWL_JS_V1__/xadmin.js"></script>
+<style>
+    .form{
+        padding: 10px 10px 0 10px;
+        background: #fff;
+    }
+</style>
+<form class="layui-form layui-form-pane form" action="" lay-filter="update">
+    <div class="layui-form-item">
+        <label class="layui-form-label">省份 </label>
+        <div class="layui-input-inline">
+            <input type="text" name="province"  lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">市 </label>
+        <div class="layui-input-inline">
+            <input type="text" name="city"  lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">区 </label>
+        <div class="layui-input-inline">
+            <input type="text" name="country"  lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">详细地址 <span class="x-red">*</span></label>
+        <div class="layui-input-block">
+            <input type="text" name="address"  lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+
+
+    <input type="hidden" name="id">
+    <div class="layui-form-item" style="    position: fixed;
+    bottom: 0;
+    left: 38%;">
+        <div class="layui-btn " lay-submit="" lay-filter="submits" style="width: 100px;height: 40px;line-height: 40px">确认修改</div>
+    </div>
+</form>
+
+<script>
+
+    layui.use(['form'], function(){
+        var form = layui.form
+            ,layer = layui.layer
+        //监听提交
+        form.on('submit(submits)', function(data){
+            $.ajax({
+                type: "post",
+                url: "{:url('update_address')}",
+                dataType: "json",
+                data:data.field,
+                success: function(data, textStatus, request){
+                    if( data.code == 20006){
+                        //用户信息失效
+                        layer.msg(data.msg,{anim:0,shade:0.6},function () {
+                            parent.location.reload();
+                            xadmin.del_tab();
+                            xadmin.close();
+                        });
+                    }else if( data.code == 1 ){
+                        layer.msg(data.msg,{anim:0,shade:0.6},function () {
+                            parent.location.reload();
+                            xadmin.close();
+                        });
+                    }else{
+                        layer.msg(data.msg,{anim:0,shade:0.6},function () {
+                            return  false;
+                        });
+                    }
+                }
+            });
+            /*layer.alert(JSON.stringify(data.field), {
+                title: '最终的提交信息'
+            })*/
+            return false;
+        });
+        //表单初始赋值
+        form.val('update', {
+            "id": "{$sel.id}", // "name": "value"
+            "province": "{$sel.province}", // "name": "value"
+            "city": "{$sel.city}" ,// "name": "value"
+            "country": "{$sel.country}" ,// "name": "value"
+            "address": "{$sel.address}" ,// "name": "value"
+
+        })
+    });
+</script>
+
+<script>
+    UE.getEditor('address',{
+        toolbars:
+            [[
+                'toggletool','fullscreen', 'source', '|', 'undo', 'redo', '|',
+                'bold', 'italic', 'underline', 'fontborder', 'strikethrough', 'superscript', 'subscript', 'removeformat', 'formatmatch', 'autotypeset', 'blockquote', 'pasteplain', '|', 'forecolor', 'backcolor', 'insertorderedlist', 'insertunorderedlist','|',
+                'simpleupload'
+            ]],
+        initialFrameWidth:600,initialFrameHeight:300,
+    });
+
+</script>

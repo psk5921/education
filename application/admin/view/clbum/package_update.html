@@ -1,0 +1,122 @@
+{include file="public/header" title="编辑套餐" keywords="编辑套餐" /}
+<script type="text/javascript" src="__KDWL_JS_V1__/xadmin.js"></script>
+<style>
+    .form{
+        padding: 10px 10px 0 10px;
+        background: #fff;
+    }
+</style>
+<form class="layui-form layui-form-pane form" action="" lay-filter="update">
+    <div class="layui-form-item">
+        <label  class="layui-form-label">
+            排序</label>
+        <div class="layui-input-inline">
+            <input type="text" name="displayorder" value="0" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">套餐名称<span class="x-red">*</span> </label>
+        <div class="layui-input-inline">
+            <input type="text" name="package_name"  lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">使用次数 <span class="x-red">*</span></label>
+        <div class="layui-input-inline">
+            <input type="text" name="package_time"  lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">可使用(月) <span class="x-red">*</span></label>
+        <div class="layui-input-inline">
+            <input type="text" name="package_month"  lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">套餐价格 <span class="x-red">*</span></label>
+        <div class="layui-input-inline">
+            <input type="text" name="package_price"  lay-verify="required" placeholder="" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+
+    <div class="layui-form-item" pane="">
+        <label class="layui-form-label" style="line-height: 20px">状态<span class="x-red">*</span></label>
+        <div class="layui-input-block">
+            <input type="radio" name="status" value="0" title="等待上架">
+            <input type="radio" name="status" value="1" title="上架">
+            <input type="radio" name="status" value="2" title="下架">
+        </div>
+    </div>
+
+
+
+
+    <input type="hidden" name="id">
+    <input type="hidden" name="class_id">
+    <div class="layui-form-item" style="    position: fixed;
+    bottom: 0;
+    left: 38%;">
+        <div class="layui-btn " lay-submit="" lay-filter="submits" style="width: 100px;height: 40px;line-height: 40px">确认修改</div>
+    </div>
+</form>
+
+<script>
+
+    layui.use(['form'], function(){
+        var form = layui.form
+            ,layer = layui.layer
+        //监听提交
+        form.on('submit(submits)', function(data){
+            $.ajax({
+                type: "post",
+                url: "{:url('package_update')}",
+                dataType: "json",
+                data:data.field,
+                success: function(data, textStatus, request){
+                    if( data.code == 20006){
+                        //用户信息失效
+                        layer.msg(data.msg,{anim:0,shade:0.6},function () {
+                            parent.location.reload();
+                            xadmin.del_tab();
+                            xadmin.close();
+                        });
+                    }else if( data.code == 1 ){
+                        layer.msg(data.msg,{anim:0,shade:0.6},function () {
+                            parent.location.reload();
+                            xadmin.close();
+                        });
+                    }else{
+                        layer.msg(data.msg,{anim:0,shade:0.6},function () {
+                            return  false;
+                        });
+                    }
+                }
+            });
+            /*layer.alert(JSON.stringify(data.field), {
+                title: '最终的提交信息'
+            })*/
+            return false;
+        });
+        //表单初始赋值
+        form.val('update', {
+            "id": "{$id}", // "name": "value"
+            "displayorder": "{$sel.displayorder}", // "name": "value"
+            "class_id": "{$class_id}", // "name": "value"
+            "package_name": "{$sel.package_name}", // "name": "value"
+            "package_time": "{$sel.package_time}", // "name": "value"
+            "package_month": "{$sel.package_month}" ,// "name": "value"
+            "package_price": "{$sel.package_price}" ,// "name": "value"
+            "status": "{$sel.status}" ,// "name": "value"
+
+
+        })
+    });
+</script>
+
+

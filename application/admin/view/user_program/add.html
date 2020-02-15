@@ -1,0 +1,227 @@
+{include file="public/header" title="添加用户课程" keywords="添加用户课程" /}
+<script type="text/javascript" src="__KDWL_JS_V1__/xadmin.js"></script>
+<style>
+    .form{
+        padding: 10px 10px 0 10px;
+        background: #fff;
+    }
+</style>
+<form class="layui-form layui-form-pane form" action="" lay-filter="add">
+
+    <div class="layui-form-item">
+        <label  class="layui-form-label">
+            会员名称<span class="x-red">*</span></label>
+        <div class="layui-input-inline">
+            <select id="uid" name="uid" class="valid" lay-filter="uid"  lay-search>
+                {volist name="users" id="vo"}
+                <option value="{$vo.id}">{$vo.info}</option>
+                {/volist}
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label  class="layui-form-label">
+            课程名称 <span class="x-red">*</span></label>
+        <div class="layui-input-inline">
+            <select id="course_id" name="course_id" class="valid" lay-filter="course_id" lay-search>
+                <option value="0">请选择课程</option>
+                {volist name="course" id="vo"}
+                <option value="{$vo.id}">{$vo.course_title}</option>
+                {/volist}
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item" id="class" style="display: none">
+        <label  class="layui-form-label">
+            班级名称 <span class="x-red">*</span></label>
+        <div class="layui-input-inline">
+            <select id="class_id" name="class_id" class="valid" lay-filter="class_id" lay-search >
+
+            </select>
+        </div>
+    </div>
+
+
+    <div class="layui-form-item" id="time" style="display: none">
+        <label  class="layui-form-label">
+            上课信息 <span class="x-red">*</span></label>
+        <div class="layui-input-inline">
+            <select id="time_id" name="time_id" class="valid" lay-search >
+
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item" id="package" style="display: none">
+        <label  class="layui-form-label">
+            套餐名称<span class="x-red">*</span></label>
+        <div class="layui-input-inline">
+            <select id="package_id" name="package_id" class="valid" lay-search>
+
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item" pane="">
+        <label class="layui-form-label" style="line-height: 20px" style="display: none">状态<span class="x-red">*</span></label>
+        <div class="layui-input-block">
+            <input type="radio" name="status" value="0" title="正常" checked="checked">
+            <input type="radio" name="status" value="1" title="异常">
+        </div>
+    </div>
+
+
+    <div class="layui-form-item" style="    position: fixed;
+    bottom: 0;
+    left: 38%;">
+        <div class="layui-btn " lay-submit="" lay-filter="submits" style="width: 100px;height: 40px;line-height: 40px">确认</div>
+    </div>
+</form>
+
+<script>
+    layui.use(['form'], function(){
+        var form = layui.form
+            ,layer = layui.layer
+        //监听提交
+        form.on('submit(submits)', function(data){
+            $.ajax({
+                type: "post",
+                url: "{:url('add')}",
+                dataType: "json",
+                data:data.field,
+                success: function(data, textStatus, request){
+                    if( data.code == 20006){
+                        //用户信息失效
+                        layer.msg(data.msg,{anim:0,shade:0.6},function () {
+                            parent.location.reload();
+                            xadmin.del_tab();
+                            xadmin.close();
+                        });
+                    }else if( data.code == 1 ){
+                        layer.msg(data.msg,{anim:0,shade:0.6},function () {
+                            parent.location.reload();
+                            xadmin.close();
+                        });
+                    }else{
+                        layer.msg(data.msg,{anim:0,shade:0.6},function () {
+                            return  false;
+                        });
+                    }
+                }
+            });
+            /*layer.alert(JSON.stringify(data.field), {
+                title: '最终的提交信息'
+            })*/
+            return false;
+        });
+
+        form.on('select(course_id)', function(data){
+            var v = data.value;
+            if(v == 0 ){
+                return;
+            }
+            $.ajax({
+                type: "post",
+                url: "{:url('get_data')}",
+                dataType: "json",
+                data:{id:v,type:1},
+                success: function(data, textStatus, request){
+                    if( data.code == 20006){
+                        //用户信息失效
+                        layer.msg(data.msg,{anim:0,shade:0.6},function () {
+                            xadmin.del_tab();
+                            xadmin.close();
+                            parent.location.href = "{:url('login/index')}"
+                        });
+                    }else if( data.code == 1 ){
+                        $('#class').show();
+                        $('#class_id').html('');
+                        $('#class_id').append(data.data);
+                        form.render('select', 'add');
+                    }else{
+                        layer.msg(data.msg,{anim:0,shade:0.6},function () {
+                            return  false;
+                        });
+                    }
+                }
+            });
+
+        });
+        form.on('select(class_id)', function(data){
+            var v = data.value;
+            if(v == 0 ){
+                return;
+            }
+            $.ajax({
+                type: "post",
+                url: "{:url('get_data')}",
+                dataType: "json",
+                data:{id:v,type:2},
+                success: function(data, textStatus, request){
+                    if( data.code == 20006){
+                        //用户信息失效
+                        layer.msg(data.msg,{anim:0,shade:0.6},function () {
+                            xadmin.del_tab();
+                            xadmin.close();
+                            parent.location.href = "{:url('login/index')}"
+                        });
+                    }else if( data.code == 1 ){
+                        $('#time').show();
+                        $('#time_id').html('');
+                        $('#time_id').append(data.data);
+                        form.render('select', 'add');
+                    }else{
+                        layer.msg(data.msg,{anim:0,shade:0.6},function () {
+                            return  false;
+                        });
+                    }
+                }
+            });
+            $.ajax({
+                type: "post",
+                url: "{:url('get_data')}",
+                dataType: "json",
+                data:{id:v,type:3},
+                success: function(data, textStatus, request){
+                    if( data.code == 20006){
+                        //用户信息失效
+                        layer.msg(data.msg,{anim:0,shade:0.6},function () {
+                            xadmin.del_tab();
+                            xadmin.close();
+                            parent.location.href = "{:url('login/index')}"
+                        });
+                    }else if( data.code == 1 ){
+                        $('#package').show();
+                        $('#package_id').html('');
+                        $('#package_id').append(data.data);
+                        form.render('select', 'add');
+                    }else{
+                        layer.msg(data.msg,{anim:0,shade:0.6},function () {
+                            return  false;
+                        });
+                    }
+                }
+            });
+
+        });
+        //表单初始赋值
+        /*  form.val('add', {
+              "username": "贤心" // "name": "value"
+              ,"password": "123456"
+              ,"interest": 1
+              ,"like[write]": true //复选框选中状态
+              ,"close": true //开关状态
+              ,"sex": "女"
+              ,"desc": "我爱 layui"
+          })*/
+
+
+    });
+
+
+    //日期范围选择
+
+
+</script>
